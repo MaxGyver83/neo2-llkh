@@ -13,18 +13,15 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _TRAYICON_H
-#define _TRAYICON_H
+#pragma once
 
-#include <windows.h>
-#include <stdbool.h>
+#define LEAN_AND_MEAN
+#include <Windows.h>
 
-typedef void (*callback_functionPtr) ();
+using callback_functionPtr = void (*) ();
 
-bool trayicon_init(HICON icon, char tooltip[]);
-bool trayicon_change_icon(HICON newicon);
+bool trayicon_init(HICON icon, const TCHAR* tooltip);
+void trayicon_change_icon(HICON newicon);
 void trayicon_remove();
 
-void trayicon_add_item(char *text, callback_functionPtr functionPtr);
-
-#endif
+void trayicon_add_item(const TCHAR *text, callback_functionPtr functionPtr);
