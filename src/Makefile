@@ -10,9 +10,9 @@ ifdef DEBUG
 	LDFLAGS:=$(filter-out -mwindows, $(LDFLAGS))
 endif
 
-all: neo-llkh.exe
+all: neo2-llkh.exe
 
-neo-llkh.exe: $(OBJECTS)
+neo2-llkh.exe: $(OBJECTS)
 	$(LD) $(LDFLAGS) -o $@ $^
 
 %.o: %.rc

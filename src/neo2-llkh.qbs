@@ -26,4 +26,7 @@ Application {
     cpp.enableExceptions: false
     cpp.dynamicLibraries: ["User32", "Shell32"]
     cpp.runtimeLibrary: "static"
+    cpp.cxxFlags: ["/utf-8"]
+
+    qbs.install: true
 }

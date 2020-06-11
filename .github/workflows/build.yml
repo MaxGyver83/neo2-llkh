@@ -1,0 +1,51 @@
+name: Build
+
+on: [push]
+
+jobs:
+  build-windows:
+    name: "Build MSVC2019-x64"
+    runs-on: "windows-latest"
+    defaults:
+      run:
+        shell: cmd
+
+    steps:
+      - run: |
+          choco install qbs
+          qbs setup-toolchains --detect
+          qbs config --list profiles
+
+      - uses: actions/checkout@v2
+
+      - name: Build
+        run: |
+          qbs build profile:MSVC2019-x64 config:release --file src/neo2-llkh.qbs --build-directory build qbs.installRoot:bin
+
+      - name: Upload
+        uses: actions/upload-artifact@v1
+        with:
+          path: ./bin/neo2-llkh.exe
+          name: neo2-llkh-msvc2019-x64.exe
+
+  build-mingw:
+    name: "Build MINGW"
+    runs-on: "windows-latest"
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build
+        working-directory: src
+        run: |
+          make
+          ls -la
+
+      - name: Upload
+        uses: actions/upload-artifact@v1
+        with:
+          path: src/neo2-llkh.exe
+          name: neo2-llkh-mingw.exe
