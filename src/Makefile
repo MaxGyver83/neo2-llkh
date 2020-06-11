@@ -1,12 +1,12 @@
 GET=i386-mingw32- #for mac
-CC=$(TARGET)gcc
-LD=$(TARGET)gcc
+CXX=$(TARGET)g++
+LD=$(TARGET)g++
 WINDRES=$(TARGET)windres
-CFLAGS=-std=c99 -O3 -DWINVER=0x500 -DWIN32_WINNT=0x500
+CXXFLAGS=-std=c++17 -O3 -DWINVER=0x500 -DWIN32_WINNT=0x500 -DUNICODE -D_UNICODE
 LDFLAGS+=-mwindows
 OBJECTS=main.o trayicon.o resources.o
 ifdef DEBUG
-	CFLAGS+= -g
+	CXXFLAGS+= -g
 	LDFLAGS:=$(filter-out -mwindows, $(LDFLAGS))
 endif
 
