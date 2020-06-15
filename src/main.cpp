@@ -345,8 +345,8 @@ auto buildLayout(const Settings& settings) -> Layout {
 /**
  * Map a key scancode to the char that should be displayed after typing
  **/
-auto mapScanCodeToChar(Level level, size_t in) -> TCHAR {
-    return g_layout[level].mapping[in];
+auto mapScanCodeToChar(Level level, size_t scanCode) -> TCHAR {
+    return g_layout[level].mapping[scanCode];
 }
 
 void sendUnicodeChar(TCHAR key) {
@@ -816,7 +816,7 @@ LRESULT CALLBACK keyevent(int code, WPARAM wparam, LPARAM lparam) {
         else if (level == LEVEL_4 && handleLayer4SpecialCases(keyInfo)) {
             return -1;
         }
-        else if (keyInfo.vkCode >= 0x60 && keyInfo.vkCode <= 0x6F) {
+        else if (keyInfo.vkCode >= VK_NUMPAD0 && keyInfo.vkCode <= VK_DIVIDE) {
             // Numeric keypad -> don't remap
         }
         else if (level == LEVEL_1 && keyInfo.vkCode >= '0' && keyInfo.vkCode <= '9') {
