@@ -819,6 +819,9 @@ LRESULT CALLBACK keyevent(int code, WPARAM wparam, LPARAM lparam) {
         else if (keyInfo.vkCode >= 0x60 && keyInfo.vkCode <= 0x6F) {
             // Numeric keypad -> don't remap
         }
+        else if (level == LEVEL_1 && keyInfo.vkCode >= '0' && keyInfo.vkCode <= '9') {
+            // numbers 0 to 9 -> don't remap
+        }
         else if (!(g_settings.qwertzForShortcuts && isSystemKeyPressed())) {
             TCHAR key = mapScanCodeToChar(level, keyInfo.scanCode);
             if (g_state.capsLockActive && (level == LEVEL_1 || level == LEVEL_2) && isLetter(key))
