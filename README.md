@@ -141,6 +141,11 @@ Wenn die linke Ebene4-Modifier-Taste einzeln angeschlagen wird, sendet sie ein T
 
 `mod4LAsTab=1`
 
+### Windows plus Leerschlag als bypass-toggle-shortcut benutzen
+Es kann <kbd>Windows</kbd>+<kbd>Leerschlag</kbd> statt <kbd>Schift</kbd>+<kbd>Pause</kbd> benutzt werden um zwischen bypass und normaler Mode umzuschalten.
+
+`winSpaceForToggle=1`
+
 ### Debug-Ausgabe in einem separaten Fenster
 `neo-llkh.exe` gibt standardmäßig Debug-Information aus, die aber nicht sichtbar sind, wenn der Treiber per Doppelklick oder im cmd-Fenster gestartet wird. Um die Ausgabe zu sehen, muss sie entweder (in *cmd*) in eine Datei umgeleitet werden (`.\neo-llkh.exe > log.txt`) oder (sofern vorhanden) in *Git Bash* gestartet werden. Oder man setzt folgenden Parameter auf 1. Dann erscheint ein separates Debug-Fenster, auch beim Start per Doppelklick.
 
