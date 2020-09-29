@@ -56,6 +56,7 @@ bool supportLevels5and6 = false;     // support levels five and six (greek lette
 bool capsLockAsEscape = false;       // if true, hitting CapsLock alone sends Esc
 bool mod3RAsReturn = false;          // if true, hitting Mod3R alone sends Return
 bool mod4LAsTab = false;             // if true, hitting Mod4L alone sends Tab
+bool winSpaceForToggle = false;	     // if true, windows and space is used to toggle bypass-mode, instead of shift and pause
 
 /**
  * True if no mapping should be done
@@ -918,8 +919,7 @@ void handleMod4Key(KBDLLHOOKSTRUCT keyInfo, bool isKeyUp) {
  **/
 bool updateStatesAndWriteKey(KBDLLHOOKSTRUCT keyInfo, bool isKeyUp)
 {
-	bool continueExecution = handleSystemKey(keyInfo, isKeyUp);
-	if (!continueExecution) return false;
+	// System keys were handled here
 
 	unsigned level = getLevel();
 
@@ -987,12 +987,33 @@ LRESULT CALLBACK keyevent(int code, WPARAM wparam, LPARAM lparam)
 		if (!continueExecution) return -1;
 	}
 
-	// Shift + Pause
-	if (code == HC_ACTION && wparam == WM_KEYDOWN && keyInfo.vkCode == VK_PAUSE && modState.shift) {
-		toggleBypassMode();
-		return -1;
+	if (code == HC_ACTION && (wparam == WM_SYSKEYUP || wparam == WM_KEYUP)) {
+		logKeyEvent("key up", keyInfo);
+
+		bool continueExecution = handleSystemKey(keyInfo, true);
+		if (!continueExecution) return false;
+	} else if (code == HC_ACTION && (wparam == WM_SYSKEYDOWN || wparam == WM_KEYDOWN)) {
+		printf("\n");
+		logKeyEvent("key down", keyInfo);
+
+		bool continueExecution = handleSystemKey(keyInfo, false);
+		if (!continueExecution) return false;
 	}
 
+	if (winSpaceForToggle) {
+		// Win + Space
+		if (code == HC_ACTION && wparam == WM_KEYDOWN && keyInfo.vkCode == VK_SPACE && winLeftPressed) {
+			toggleBypassMode();
+			return -1;
+		}
+	} else {
+		// Shift + Pause
+		if (code == HC_ACTION && wparam == WM_KEYDOWN && keyInfo.vkCode == VK_PAUSE && modState.shift) {
+			toggleBypassMode();
+			return -1;
+		}
+	}
+	
 	if (bypassMode) {
 		if (code == HC_ACTION && keyInfo.vkCode == VK_CAPITAL && !(keyInfo.flags & LLKHF_UP)) {
 			// synchronize with capsLock state during bypass
@@ -1152,6 +1173,9 @@ int main(int argc, char *argv[])
 		GetPrivateProfileStringA("Settings", "debugWindow", "0", returnValue, 100, ini);
 		debugWindow = (strcmp(returnValue, "1") == 0);
 
+		GetPrivateProfileStringA("Settings", "winSpaceForToggle", "0", returnValue, 100, ini);
+		winSpaceForToggle = (strcmp(returnValue, "1") == 0);
+
 		if (capsLockEnabled)
 			shiftLockEnabled = false;
 
@@ -1178,6 +1202,7 @@ int main(int argc, char *argv[])
 		printf(" capsLockAsEscape: %d\n", capsLockAsEscape);
 		printf(" mod3RAsReturn: %d\n", mod3RAsReturn);
 		printf(" mod4LAsTab: %d\n", mod4LAsTab);
+		printf(" winSpaceForToggle: %d\n\n", winSpaceForToggle);
 		printf(" debugWindow: %d\n\n", debugWindow);
 
 	} else {
