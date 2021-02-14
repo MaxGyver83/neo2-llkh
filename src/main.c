@@ -546,12 +546,14 @@ void initLayout() {
 	// same for all layouts
 	wcscpy(mappingTableLevel1 +  2, L"1234567890-`");
 	wcscpy(mappingTableLevel1 + 71, L"789-456+1230.");
-	mappingTableLevel1[69] = VK_TAB; // NumLock key → tabulator
+	mappingTableLevel1[57] = L' '; // Spacebar → space
+	mappingTableLevel1[69] = L'\t'; // NumLock key → tabulator
 
 	mappingTableLevel2[41] = L'\u030C'; // key to the left of the "1" key, "Combining Caron"
 	wcscpy(mappingTableLevel2 +  2, L"°§ℓ»«$€„“”—̧");
 	wcscpy(mappingTableLevel2 + 71, L"✔✘†-♣€‣+♦♥♠␣."); // numeric keypad
-	mappingTableLevel2[69] = VK_TAB; // NumLock key → tabulator
+	mappingTableLevel2[57] = L' '; // Spacebar → space
+	mappingTableLevel2[69] = L'\t'; // NumLock key → tabulator
 	// https://neo-layout.org/grafik/aufsteller/neo20-aufsteller.pdf
 
 	wcscpy(mappingTableLevel3 + 41, L"^");
@@ -561,8 +563,9 @@ void initLayout() {
 	wcscpy(mappingTableLevel3 + 30, L"\\/{}*?()-:@");
 	wcscpy(mappingTableLevel3 + 44, L"#$|~`+%\"';");
 	wcscpy(mappingTableLevel3 + 71, L"↕↑↨−←:→±↔↓⇌%,"); // numeric keypad
-	wcscpy(mappingTableLevel3 + 55, L"⋅");  // *-key on numeric keypad
-	wcscpy(mappingTableLevel3 + 69, L"=");  // num-lock-key
+	mappingTableLevel3[55] = L'⋅'; // *-key on numeric keypad
+	mappingTableLevel3[57] = L' '; // Spacebar → space
+	mappingTableLevel3[69] = L'='; // num-lock-key
 
 	mappingTableLevel4[41] = L'\u0307'; // "Combining Dot Above"
 	wcscpy(mappingTableLevel4 +  2, L"ªº№⋮·£¤0/*-");
@@ -570,10 +573,10 @@ void initLayout() {
 	wcscpy(mappingTableLevel4 + 21, L"¡789+−˝");
 	wcscpy(mappingTableLevel4 + 35, L"¿456,.");
 	wcscpy(mappingTableLevel4 + 49, L":123;");
-	wcscpy(mappingTableLevel4 + 55, L"×");  // *-key on numeric keypad
-	wcscpy(mappingTableLevel4 + 74, L"∖");  // --key on numeric keypad
-	wcscpy(mappingTableLevel4 + 78, L"∓");  // +-key on numeric keypad
-	wcscpy(mappingTableLevel4 + 69, L"≠");  // num-lock-key
+	mappingTableLevel4[55] = L'×'; // *-key on numeric keypad
+	mappingTableLevel4[74] = L'∖'; // --key on numeric keypad
+	mappingTableLevel4[78] = L'∓'; // +-key on numeric keypad
+	mappingTableLevel4[69] = L'≠'; // num-lock-key
 
 	// layout dependent
 	if (strcmp(layout, "adnw") == 0) {
