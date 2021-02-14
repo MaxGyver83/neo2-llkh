@@ -146,6 +146,16 @@ void handleMod3Key(KBDLLHOOKSTRUCT keyInfo, bool isKeyUp);
 void handleMod4Key(KBDLLHOOKSTRUCT keyInfo, bool isKeyUp);
 bool updateStatesAndWriteKey(KBDLLHOOKSTRUCT keyInfo, bool isKeyUp);
 
+
+void convertToUTF8(TCHAR *wide, char *utf8) {
+	int sizeRequired = WideCharToMultiByte(
+			CP_UTF8, 0, &wide[0], -1, NULL,
+			0, NULL, NULL);
+	int bytesWritten = WideCharToMultiByte(
+			CP_UTF8, 0, &wide[0], -1, &utf8[0],
+			sizeRequired, NULL, NULL);
+}
+
 void resetKeyQueue() {
 	keyQueueLength = 0;
 	keyQueueFirst = 0;
@@ -659,6 +669,7 @@ void initLayout() {
 
 	if (supportLevels5and6) {
 		// map main block on levels 5 and 6
+		// (Neo does not define characters for u, v and ü on level 5.)
 		TCHAR * charsLevel5 = L"αβχδεφγψιθκλμνοπϕρστuvωξυζηϵüςϑϱ";  // a-zäöüß.,
 		mapLevels_2_5_6(mappingTableLevel5, charsLevel5);
 		TCHAR * charsLevel6 = L"∀⇐ℂΔ∃ΦΓΨ∫Θ⨯Λ⇔ℕ∈ΠℚℝΣ∂⊂√ΩΞ∇ℤℵ∩∪∘↦⇒";  // a-zäöüß.,
@@ -1234,7 +1245,10 @@ bool updateStatesAndWriteKey(KBDLLHOOKSTRUCT keyInfo, bool isKeyUp) {
 		if (key != 0 && (keyInfo.flags & LLKHF_INJECTED) == 0) {
 			// if key must be mapped
 			int character = MapVirtualKeyA(keyInfo.vkCode, MAPVK_VK_TO_CHAR);
-			printf("%-13s | sc:%03d %c->%c [0x%04X] (level %u)\n", " mapped", keyInfo.scanCode, character, key, key, level);
+			TCHAR keyUTF16[] = {key, 0};
+			char keyUTF8[4];
+			convertToUTF8(keyUTF16, keyUTF8);
+			printf("%-13s | sc:%03d %c->%s [0x%04X] (level %u)\n", " mapped", keyInfo.scanCode, character, keyUTF8, key, level);
 			sendChar(key, keyInfo);
 			return false;
 		}
@@ -1399,7 +1413,6 @@ bool checkSetting(char *keyword, char *filename) {
 
 int main(int argc, char *argv[]) {
 	setbuf(stdout, NULL);
-
 	/**
 	* find settings.ini (in same folder as neo-llkh.exe)
 	*/
@@ -1446,9 +1459,10 @@ int main(int argc, char *argv[]) {
 		if (swapLeftCtrlLeftAltAndLeftWin)
 			swapLeftCtrlAndLeftAlt = false;
 
-		if (debugWindow)
+		if (debugWindow) {
 			// Open Console Window to see printf output
 			SetStdOutToNewConsole();
+		}
 
 		printf("\nEinstellungen aus %s:\n", ini);
 		printf(" Layout: %s\n", layout);
@@ -1513,7 +1527,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	if (argc >= 2) {
-		printf("Einstellungen von der Kommandozeile:");
+		printf("\nEinstellungen von der Kommandozeile:");
 		const char delimiter[] = "=";
 		char *param, *value;
 		for (int i = 1; i < argc; i++) {
@@ -1551,9 +1565,10 @@ int main(int argc, char *argv[]) {
 			if (strcmp(param, "debugWindow") == 0) {
 				bool debugWindowAlreadyStarted = debugWindow;
 				debugWindow = (strcmp(value, "1") == 0);
-				if (debugWindow && !debugWindowAlreadyStarted)
+				if (debugWindow && !debugWindowAlreadyStarted) {
 					// Open Console Window to see printf output
 					SetStdOutToNewConsole();
+				}
 				printf("\n debugWindow: %d", debugWindow);
 
 			} else if (strcmp(param, "layout") == 0) {
@@ -1644,6 +1659,9 @@ int main(int argc, char *argv[]) {
 	// but then keyup for alt. Then ctrl would be locked.
 	// Also needed for removing tray icon when quitting with ctrl-c.
 	SetConsoleCtrlHandler(CtrlHandler, TRUE);
+
+	SetConsoleCP(CP_UTF8);
+	SetConsoleOutputCP(CP_UTF8);
 
 	initCharacterToScanCodeMap();
 	initLayout();
