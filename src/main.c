@@ -811,7 +811,7 @@ void sendChar(TCHAR key, KBDLLHOOKSTRUCT keyInfo) {
 		// Furthermore, use unicode for number keys.
 		sendUnicodeChar(key, keyInfo);
 	} else {
-		keyInfo.vkCode = keyScanResult;
+		keyInfo.vkCode = keyScanResult & 0xff;
 		char modifiers = keyScanResult >> 8;
 		bool shift = ((modifiers & 1) != 0);
 		bool alt = ((modifiers & 2) != 0);
@@ -822,14 +822,14 @@ void sendChar(TCHAR key, KBDLLHOOKSTRUCT keyInfo) {
 			alt = false;
 		}
 
-		if (altgr) sendDown(VK_RMENU, 56, false);
+		if (altgr) sendDown(VK_RMENU, 56, true);
 		if (ctrl) sendDown(VK_CONTROL, 29, false);
 		if (alt) sendDown(VK_MENU, 56, false); // ALT
 		if (shift) sendDown(VK_SHIFT, 42, false);
 
 		keybd_event(keyInfo.vkCode, keyInfo.scanCode, dwFlagsFromKeyInfo(keyInfo), keyInfo.dwExtraInfo);
 
-		if (altgr) sendUp(VK_RMENU, 56, false);
+		if (altgr) sendUp(VK_RMENU, 56, true);
 		if (ctrl) sendUp(VK_CONTROL, 29, false);
 		if (alt) sendUp(VK_MENU, 56, false); // ALT
 		if (shift) sendUp(VK_SHIFT, 42, false);
@@ -1636,7 +1636,7 @@ int main(int argc, char *argv[]) {
 			}
 		}
 	}
-	// tranform possibly UTF-8 encoded custom layout string to UTF-16
+	// transform possibly UTF-8 encoded custom layout string to UTF-16
 	str2wcs(customLayoutWcs, customLayout, 33);
 
 	if (quoteAsMod3R)
